@@ -1,1 +1,12 @@
+[package]                         # Cargo package metadata
+name = "stylizer_wasm"            # Crate name (affects generated JS file name)
+version = "0.1.0"                 # Crate version
+edition = "2021"                  # Rust edition
+
+[lib]                             # Library target config
+crate-type = ["cdylib"]           # Build as C-compatible dynlib (needed for wasm-pack)
+
+[dependencies]                    # Crate dependencies
+wasm-bindgen = "0.2"              # Rust↔JS/WASM bindings
+console_error_panic_hook = "0.1"  # Pretty panic messages in browser console
 
