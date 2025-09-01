@@ -1,27 +1,34 @@
-import { useEffect, useState } from 'react';  // React hooks for lifecycle + state
-import { initWasm } from './wasm';            // Our WASM initializer
+import { useEffect, useState } from 'react';
+import { initWasm } from './wasm';
 
-export default function App() {               // Root component
-  const [ready, setReady] = useState(false);  // Track WASM init status for the UI
+export default function App() {
+  const [ready, setReady] = useState(false);
+  const [err, setErr] = useState<null | string>(null);
 
-  useEffect(() => {                           // Run once on mount
+  useEffect(() => {
     (async () => {
       try {
-        await initWasm();                     // Load + init the .wasm module
-        setReady(true);                       // Flip UI state on success
-      } catch (e) {
-        console.error('WASM init failed:', e);// Helpful console error on failure
-        setReady(false);                      // Keep UI honest if init fails
+        await initWasm();
+        setReady(true);
+      } catch (e: any) {
+        setErr(String(e?.message ?? e));
+        setReady(false);
       }
     })();
-  }, []);                                     // Empty deps => only once
+  }, []);
 
-  return (                                    // Render minimal status UI
+  return (
     <main style={{ padding: 24, fontFamily: 'system-ui' }}>
       <h1>Rust + WASM + Vite</h1>
       <p>Status: <strong>{ready ? 'Ready ✅' : 'Loading…'}</strong></p>
-      <p>Open console and look for <code>[WASM] wasm online</code>.</p>
+      {err && (
+        <pre style={{ color: 'crimson', whiteSpace: 'pre-wrap', marginTop: 12 }}>
+          Error: {err}
+        </pre>
+      )}
+      <p style={{ marginTop: 12 }}>
+        Open DevTools → Console and look for logs starting with <code>[WASM]</code>.
+      </p>
     </main>
   );
 }
-
